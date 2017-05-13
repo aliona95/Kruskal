@@ -1,33 +1,30 @@
-import java.util.Collections;
 
+import java.util.Collections;
 public class Kruskal {
     
-    public static Grafas gautiMST(Grafas grafas) {
-    	
-        Grafas karkasas = new Grafas();
-        karkasas.uzsetintiVirsunes(grafas.gautiVirsunes());
+    public static Graph getMinimumumSpanningTree(Graph graph) {
+        Graph result = new Graph();
+        result.setVertices(graph.getVertices());
+        //System.out.println(graph.getVertices());
     
-        DisjointSet<Virsune> vertexDisjointSet = new DisjointSet<Virsune>();
+        DisjointSet<Vertex> vertexDisjointSet = new DisjointSet<Vertex>();
         
-        // kiekvienai virsunei uzsetiname teva (ja pacia)
-        for (Virsune virsune: grafas.gautiVirsunes()) {
-            vertexDisjointSet.makeSet(virsune);
+        for (Vertex v: graph.getVertices()) {
+            vertexDisjointSet.makeSet(v);
         }
-        
-        // surikiuojame briaunas ju svoriu didejimo tvarka
-        Collections.sort(grafas.gautiBriaunas());
+        System.out.println("Nesurikiuota " + graph.getEdges().toString());
+        Collections.sort(graph.getEdges());
+        System.out.println("Surikiuota " + graph.getEdges().toString());
 
-        for (Briauna briauna: grafas.gautiBriaunas()) {
+        for (Edge e: graph.getEdges()) {
         	// tikriname ar briaunos virsunes yra skirtinguose setuose
-            if (vertexDisjointSet.findSet(briauna.gautiNuoKur()) != 
-            	vertexDisjointSet.findSet(briauna.gautiIkiKur())) {
-            	
-                karkasas.pridetiBriauna(briauna);
-               
-                // sujungiame setus ir uzsetiname setui teva, kurio rangas didesnis
-                vertexDisjointSet.union(briauna.gautiNuoKur(), briauna.gautiIkiKur());
+            if (vertexDisjointSet.findSet(e.getFrom()) != vertexDisjointSet.findSet(e.getTo())) {
+                result.addEdge(e);
+                System.out.println("I KARKASA PRIDEDAMA BRIAUNA = " + e.toString());
+                // sujungiame setus
+                vertexDisjointSet.union(e.getFrom(), e.getTo());
             }
         }
-        return karkasas;
+        return result;
     }
 }
