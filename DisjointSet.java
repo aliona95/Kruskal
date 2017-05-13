@@ -4,76 +4,57 @@ import java.util.List;
 
 public class DisjointSet<T> {
 	
-	private static class Node<T> {
-		int rank;
-		T parent;
+	private static class Virsune<T> {
+		int rangas;
+		T tevas;
 
-		Node(T parent, int rank) {
-			this.parent = parent;
-			this.rank = rank;
+		Virsune(T tevas, int rangas) {
+			this.tevas = tevas;
+			this.rangas = rangas;
 		}
 	}
 
-	private final HashMap<T, Node<T>> objectsToNodes = new HashMap<>();
+	private final HashMap<T, Virsune<T>> objectsToNodes = new HashMap<>();
 	
+	// findSet(virsuneX) - f-ja surandanti kuriai aibei priklauso virsuneX
 	public T findSet(Object o) {
-		DisjointSet.Node<T> node = objectsToNodes.get(o);
+		DisjointSet.Virsune<T> node = objectsToNodes.get(o);
 		if (node == null) {
 			return null;
 		}
-		if (o != node.parent) {
-			System.out.println("REKURSIJA");
-			node.parent = findSet(node.parent);
+		if (o != node.tevas) {
+			//System.out.println("REKURSIJA");
+			node.tevas = findSet(node.tevas);
 		}
-		System.out.println("FIND SET PARENT = " + node.parent.toString());
-		return node.parent;
+		//System.out.println("FIND SET PARENT = " + node.tevas.toString());
+		return node.tevas;
 	}
 
 	// o - vertex???
+	// makeSet funkcija visoms virsunems priskiria save kaip teva (rodykle i save).
 	public void makeSet(T o) {
-		objectsToNodes.put(o, new Node<>(o, 0));   // 0 yra rank?
+		objectsToNodes.put(o, new Virsune<>(o, 0));   // 0 yra rangas
 	}
-/*
-	public void removeSet(Object o) {
-		Object set = findSet(o);
-		if (set == null) {
+	
+	public void union(T virsuneX, T virsuneY) {
+		// findSet(virsuneX) - f-ja surandanti kuriai aibei priklauso virsuneX
+		T aibeVirsunesX = findSet(virsuneX);
+		T aibeVirsunesY = findSet(virsuneY);
+		// virsunes negali buti sujungtos briauna, jei jos yra is tos pacios aibes
+		if (aibeVirsunesX == null || aibeVirsunesY == null || aibeVirsunesX == aibeVirsunesY) {
 			return;
 		}
-		for (Iterator<T> it = objectsToNodes.keySet().iterator(); it.hasNext();) {
-			T next = it.next();
-			//remove the set representative last, otherwise findSet will fail
-			if (next != set && findSet(next) == set) {
-				it.remove();
-			}
-		}
-		objectsToNodes.remove(set);
-	}*/
-	// naudojamas?????
-	/*public void toList(List<? super T> list) {
-		list.addAll(objectsToNodes.keySet());
-		System.out.println(objectsToNodes.keySet());
-	}
-*/
-	public void union(T x, T y) {
-		T setX = findSet(x);
-		T setY = findSet(y);
-		if (setX == null || setY == null || setX == setY) {
-			return;
-		}
-		Node<T> nodeX = objectsToNodes.get(setX);
-		Node<T> nodeY = objectsToNodes.get(setY);
+		Virsune<T> mazgasX = objectsToNodes.get(aibeVirsunesX);
+		Virsune<T> mazgasY = objectsToNodes.get(aibeVirsunesY);
 	    
-		//join the two sets by pointing the root of one at the root of the other
-		System.out.println("NOdeX " + nodeX.rank);
-		System.out.println("NodeY " + nodeY.rank);
-		//System.out.println("NODEX Parent " + nodeX.parent.toString());
-		//System.out.println("NODEY Parent " + nodeY.parent);
-		if (nodeX.rank > nodeY.rank) {
-			nodeY.parent = x;
+		// tevu tampa tas tevas, kurio rangas didesnis
+		if (mazgasX.rangas > mazgasY.rangas) {
+			mazgasY.tevas = virsuneX;
 		} else {
-			nodeX.parent = y;
-			if (nodeX.rank == nodeY.rank) {
-				nodeY.rank++;
+			mazgasX.tevas = virsuneY;
+			// jei aibiu rangai sutampa, tada rangas padidinamas vienetu
+			if (mazgasX.rangas == mazgasY.rangas) {
+				mazgasY.rangas++;
 			}
 		}
 	}
